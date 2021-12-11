@@ -124,3 +124,4 @@ app/app-test.db
 .vagrant
 .ds_store
 *.code-workspace
+*.env
