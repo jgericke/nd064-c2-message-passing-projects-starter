@@ -24,33 +24,30 @@ logger = logging.getLogger("locations")
 
 class LocationServicer(location_pb2_grpc.LocationServiceServicer):
     def Get(self, request, context):
-
+        logger.info("received request for locations")
+        # Retrieve all locations
         locations: List[Location] = LocationService.retrieve_all()
 
-        location_message_list = []
+        # Marshal location to Location protobuf
+        location_list = []
         for location in LocationSchema(many=True).dump(locations):
-            location_message = location_pb2.LocationMessage()
-            location_message_list.append(
-                json_format.ParseDict(location, location_message)
-            )
+            location_message = location_pb2.Location()
+            location_list.append(json_format.ParseDict(location, location_message))
 
-        locations_str = {
-            "id": 1,
-            "person_id": 5,
-            "longitude": "37.4363",
-            "latitude": "-122.290843",
-            "creation_time": "2021-07-07T10:37:06",
-        }
-
-        print(type(location_message_list[0]))
-
-        # logger.info(type(json.dumps(LocationSchema(many=True).dump(locations))))
-        result = location_pb2.LocationMessageList()
-        result.locations.extend(location_message_list)
+        result = location_pb2.LocationList()
+        result.locations.extend(location_list)
         return result
 
+    def GetLocation(self, request, context):
+        logger.info("received request for location id: {}".format(request.id))
+        location: Location = LocationService.retrieve(request.id)
+
+        result = location_pb2.Location()
+        return json_format.ParseDict(LocationSchema().dump(location), result)
+
     def Create(self, request, context):
-        print("Received a message!")
+
+        logger.info("received location creation request")
 
         request_value = {
             "person_id": request.person_id,
@@ -58,9 +55,10 @@ class LocationServicer(location_pb2_grpc.LocationServiceServicer):
             "latitude": request.latitude,
             "creation_time": request.creation_time,
         }
-        print(request_value)
 
-        return location_pb2.LocationMessage(**request_value)
+        location: Location = LocationService.create(request_value)
+        result = location_pb2.Location()
+        return json_format.ParseDict(LocationSchema().dump(location), result)
 
 
 server = grpc.server(futures.ThreadPoolExecutor(max_workers=2))

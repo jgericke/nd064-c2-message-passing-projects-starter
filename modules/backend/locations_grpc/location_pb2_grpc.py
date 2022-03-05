@@ -14,28 +14,39 @@ class LocationServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Create = channel.unary_unary(
-                '/LocationService/Create',
-                request_serializer=location__pb2.LocationMessage.SerializeToString,
-                response_deserializer=location__pb2.LocationMessage.FromString,
-                )
         self.Get = channel.unary_unary(
                 '/LocationService/Get',
                 request_serializer=location__pb2.Empty.SerializeToString,
-                response_deserializer=location__pb2.LocationMessageList.FromString,
+                response_deserializer=location__pb2.LocationList.FromString,
+                )
+        self.GetLocation = channel.unary_unary(
+                '/LocationService/GetLocation',
+                request_serializer=location__pb2.GetLocationRequest.SerializeToString,
+                response_deserializer=location__pb2.Location.FromString,
+                )
+        self.Create = channel.unary_unary(
+                '/LocationService/Create',
+                request_serializer=location__pb2.CreateLocationRequest.SerializeToString,
+                response_deserializer=location__pb2.Location.FromString,
                 )
 
 
 class LocationServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def Create(self, request, context):
+    def Get(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Get(self, request, context):
+    def GetLocation(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Create(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -44,15 +55,20 @@ class LocationServiceServicer(object):
 
 def add_LocationServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Create': grpc.unary_unary_rpc_method_handler(
-                    servicer.Create,
-                    request_deserializer=location__pb2.LocationMessage.FromString,
-                    response_serializer=location__pb2.LocationMessage.SerializeToString,
-            ),
             'Get': grpc.unary_unary_rpc_method_handler(
                     servicer.Get,
                     request_deserializer=location__pb2.Empty.FromString,
-                    response_serializer=location__pb2.LocationMessageList.SerializeToString,
+                    response_serializer=location__pb2.LocationList.SerializeToString,
+            ),
+            'GetLocation': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetLocation,
+                    request_deserializer=location__pb2.GetLocationRequest.FromString,
+                    response_serializer=location__pb2.Location.SerializeToString,
+            ),
+            'Create': grpc.unary_unary_rpc_method_handler(
+                    servicer.Create,
+                    request_deserializer=location__pb2.CreateLocationRequest.FromString,
+                    response_serializer=location__pb2.Location.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -63,23 +79,6 @@ def add_LocationServiceServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class LocationService(object):
     """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def Create(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/LocationService/Create',
-            location__pb2.LocationMessage.SerializeToString,
-            location__pb2.LocationMessage.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def Get(request,
@@ -94,6 +93,40 @@ class LocationService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/LocationService/Get',
             location__pb2.Empty.SerializeToString,
-            location__pb2.LocationMessageList.FromString,
+            location__pb2.LocationList.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetLocation(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/LocationService/GetLocation',
+            location__pb2.GetLocationRequest.SerializeToString,
+            location__pb2.Location.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Create(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/LocationService/Create',
+            location__pb2.CreateLocationRequest.SerializeToString,
+            location__pb2.Location.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
