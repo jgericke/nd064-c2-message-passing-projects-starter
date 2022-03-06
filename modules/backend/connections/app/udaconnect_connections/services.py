@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Dict, List
 
-from app import db
+from app import db, config
 from app.udaconnect_connections.models import Connection, Location, Person
 from app.udaconnect_connections.schemas import (
     ConnectionSchema,
@@ -12,8 +12,19 @@ from app.udaconnect_connections.schemas import (
 from geoalchemy2.functions import ST_AsText, ST_Point
 from sqlalchemy.sql import text
 
-logging.basicConfig(level=logging.WARNING)
-logger = logging.getLogger("udaconnect-api")
+import grpc
+from protos import location_pb2
+from protos import location_pb2_grpc
+
+from google.protobuf.json_format import MessageToDict
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("connections-api")
+
+DATE_FORMAT = "%Y-%m-%d"
+
+# Initialize GPRC channel
+grpc_channel = grpc.insecure_channel(config.GRPC_URI)
 
 
 class ConnectionService:
@@ -21,37 +32,36 @@ class ConnectionService:
     def find_contacts(
         person_id: int, start_date: datetime, end_date: datetime, meters=5
     ) -> List[Connection]:
-        """
-        Finds all Person who have been within a given distance of a given Person within a date range.
 
-        This will run rather quickly locally, but this is an expensive method and will take a bit of time to run on
-        large datasets. This is by design: what are some ways or techniques to help make this data integrate more
-        smoothly for a better user experience for API consumers?
-        """
-        locations: List = (
-            db.session.query(Location)
-            .filter(Location.person_id == person_id)
-            .filter(Location.creation_time < end_date)
-            .filter(Location.creation_time >= start_date)
-            .all()
+        # Retrieve location range for person_id via GRPC channel
+        locations_stub = location_pb2_grpc.LocationServiceStub(grpc_channel)
+        locations_resp = locations_stub.GetLocationRange(
+            location_pb2.GetLocationRangeRequest(
+                person_id=int(person_id), start_date=start_date, end_date=end_date
+            )
         )
+        # Convert locations_resp.locations
+        locations: List = locations_resp.locations
 
         # Cache all users in memory for quick lookup
         person_map: Dict[str, Person] = {
             person.id: person for person in PersonService.retrieve_all()
         }
 
-        # Prepare arguments for queries
+        # Prepare arguments for queries - Note date reformating for delta
         data = []
         for location in locations:
+
             data.append(
                 {
                     "person_id": person_id,
                     "longitude": location.longitude,
                     "latitude": location.latitude,
                     "meters": meters,
-                    "start_date": start_date.strftime("%Y-%m-%d"),
-                    "end_date": (end_date + timedelta(days=1)).strftime("%Y-%m-%d"),
+                    "start_date": start_date,
+                    "end_date": (
+                        datetime.strptime(end_date, DATE_FORMAT) + timedelta(days=1)
+                    ).strftime("%Y-%m-%d"),
                 }
             )
 
@@ -89,3 +99,26 @@ class ConnectionService:
                 )
 
         return result
+
+
+class PersonService:
+    @staticmethod
+    def create(person: Dict) -> Person:
+        new_person = Person()
+        new_person.first_name = person["first_name"]
+        new_person.last_name = person["last_name"]
+        new_person.company_name = person["company_name"]
+
+        db.session.add(new_person)
+        db.session.commit()
+
+        return new_person
+
+    @staticmethod
+    def retrieve(person_id: int) -> Person:
+        person = db.session.query(Person).get(person_id)
+        return person
+
+    @staticmethod
+    def retrieve_all() -> List[Person]:
+        return db.session.query(Person).all()

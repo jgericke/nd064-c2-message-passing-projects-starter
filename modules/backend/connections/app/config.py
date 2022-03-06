@@ -6,6 +6,7 @@ DB_PASSWORD = os.environ["DB_PASSWORD"]
 DB_HOST = os.environ["DB_HOST"]
 DB_PORT = os.environ["DB_PORT"]
 DB_NAME = os.environ["DB_NAME"]
+GRPC_URI = os.environ["GRPC_URI"]
 
 
 class BaseConfig:
@@ -13,6 +14,7 @@ class BaseConfig:
     USE_MOCK_EQUIVALENCY = False
     DEBUG = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    GRPC_URI = f"{GRPC_URI}"
 
 
 class DevelopmentConfig(BaseConfig):

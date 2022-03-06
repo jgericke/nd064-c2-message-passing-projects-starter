@@ -99,7 +99,7 @@ class LocationServicer(location_pb2_grpc.LocationServiceServicer):
 
 if __name__ == "__main__":
 
-    logger.info("Starting LocationService (max_woerks=2) on port: 5005")
+    logger.info("Starting LocationService (max_workers=2) on port: 5005")
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=2))
     location_pb2_grpc.add_LocationServiceServicer_to_server(LocationServicer(), server)
