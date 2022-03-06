@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import location_pb2 as location__pb2
+from protos import location_pb2 as protos_dot_location__pb2
 
 
 class LocationServiceStub(object):
@@ -16,23 +16,23 @@ class LocationServiceStub(object):
         """
         self.Get = channel.unary_unary(
                 '/LocationService/Get',
-                request_serializer=location__pb2.Empty.SerializeToString,
-                response_deserializer=location__pb2.LocationList.FromString,
+                request_serializer=protos_dot_location__pb2.Empty.SerializeToString,
+                response_deserializer=protos_dot_location__pb2.LocationList.FromString,
                 )
         self.GetLocation = channel.unary_unary(
                 '/LocationService/GetLocation',
-                request_serializer=location__pb2.GetLocationRequest.SerializeToString,
-                response_deserializer=location__pb2.Location.FromString,
+                request_serializer=protos_dot_location__pb2.GetLocationRequest.SerializeToString,
+                response_deserializer=protos_dot_location__pb2.Location.FromString,
                 )
         self.GetLocationRange = channel.unary_unary(
                 '/LocationService/GetLocationRange',
-                request_serializer=location__pb2.GetLocationRangeRequest.SerializeToString,
-                response_deserializer=location__pb2.LocationList.FromString,
+                request_serializer=protos_dot_location__pb2.GetLocationRangeRequest.SerializeToString,
+                response_deserializer=protos_dot_location__pb2.LocationList.FromString,
                 )
         self.Create = channel.unary_unary(
                 '/LocationService/Create',
-                request_serializer=location__pb2.CreateLocationRequest.SerializeToString,
-                response_deserializer=location__pb2.Location.FromString,
+                request_serializer=protos_dot_location__pb2.CreateLocationRequest.SerializeToString,
+                response_deserializer=protos_dot_location__pb2.Location.FromString,
                 )
 
 
@@ -68,23 +68,23 @@ def add_LocationServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Get': grpc.unary_unary_rpc_method_handler(
                     servicer.Get,
-                    request_deserializer=location__pb2.Empty.FromString,
-                    response_serializer=location__pb2.LocationList.SerializeToString,
+                    request_deserializer=protos_dot_location__pb2.Empty.FromString,
+                    response_serializer=protos_dot_location__pb2.LocationList.SerializeToString,
             ),
             'GetLocation': grpc.unary_unary_rpc_method_handler(
                     servicer.GetLocation,
-                    request_deserializer=location__pb2.GetLocationRequest.FromString,
-                    response_serializer=location__pb2.Location.SerializeToString,
+                    request_deserializer=protos_dot_location__pb2.GetLocationRequest.FromString,
+                    response_serializer=protos_dot_location__pb2.Location.SerializeToString,
             ),
             'GetLocationRange': grpc.unary_unary_rpc_method_handler(
                     servicer.GetLocationRange,
-                    request_deserializer=location__pb2.GetLocationRangeRequest.FromString,
-                    response_serializer=location__pb2.LocationList.SerializeToString,
+                    request_deserializer=protos_dot_location__pb2.GetLocationRangeRequest.FromString,
+                    response_serializer=protos_dot_location__pb2.LocationList.SerializeToString,
             ),
             'Create': grpc.unary_unary_rpc_method_handler(
                     servicer.Create,
-                    request_deserializer=location__pb2.CreateLocationRequest.FromString,
-                    response_serializer=location__pb2.Location.SerializeToString,
+                    request_deserializer=protos_dot_location__pb2.CreateLocationRequest.FromString,
+                    response_serializer=protos_dot_location__pb2.Location.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -108,8 +108,8 @@ class LocationService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/LocationService/Get',
-            location__pb2.Empty.SerializeToString,
-            location__pb2.LocationList.FromString,
+            protos_dot_location__pb2.Empty.SerializeToString,
+            protos_dot_location__pb2.LocationList.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -125,8 +125,8 @@ class LocationService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/LocationService/GetLocation',
-            location__pb2.GetLocationRequest.SerializeToString,
-            location__pb2.Location.FromString,
+            protos_dot_location__pb2.GetLocationRequest.SerializeToString,
+            protos_dot_location__pb2.Location.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -142,8 +142,8 @@ class LocationService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/LocationService/GetLocationRange',
-            location__pb2.GetLocationRangeRequest.SerializeToString,
-            location__pb2.LocationList.FromString,
+            protos_dot_location__pb2.GetLocationRangeRequest.SerializeToString,
+            protos_dot_location__pb2.LocationList.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -159,7 +159,7 @@ class LocationService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/LocationService/Create',
-            location__pb2.CreateLocationRequest.SerializeToString,
-            location__pb2.Location.FromString,
+            protos_dot_location__pb2.CreateLocationRequest.SerializeToString,
+            protos_dot_location__pb2.Location.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

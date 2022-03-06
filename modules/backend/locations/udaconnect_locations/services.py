@@ -2,21 +2,25 @@ import logging
 from datetime import datetime, timedelta
 from typing import Dict, List
 
-from app import db
-from app.udaconnect_locations.models import Location, Person
-from app.udaconnect_locations.schemas import LocationSchema
+from udaconnect_locations.models import Location, Person
+from udaconnect_locations.schemas import LocationSchema
 from geoalchemy2.functions import ST_AsText, ST_Point
 from sqlalchemy.sql import text
 
-logging.basicConfig(level=logging.WARNING)
-logger = logging.getLogger("udaconnect-api")
+from udaconnect_locations.database import Session
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("locations")
+
+
+session = Session()
 
 
 class LocationService:
     @staticmethod
     def retrieve(location_id) -> Location:
         location, coord_text = (
-            db.session.query(Location, Location.coordinate.ST_AsText())
+            session.query(Location, Location.coordinate.ST_AsText())
             .filter(Location.id == location_id)
             .one()
         )
@@ -27,7 +31,20 @@ class LocationService:
 
     @staticmethod
     def retrieve_all() -> List[Location]:
-        return db.session.query(Location).all()
+        return session.query(Location).all()
+
+    @staticmethod
+    def retrieve_range(
+        person_id: int, start_date: datetime, end_date: datetime
+    ) -> List[Location]:
+        locations: List = (
+            session.query(Location)
+            .filter(Location.person_id == person_id)
+            .filter(Location.creation_time < end_date)
+            .filter(Location.creation_time >= start_date)
+            .all()
+        )
+        return locations
 
     @staticmethod
     def create(location: Dict) -> Location:
@@ -40,7 +57,7 @@ class LocationService:
         new_location.person_id = location["person_id"]
         new_location.creation_time = location["creation_time"]
         new_location.coordinate = ST_Point(location["latitude"], location["longitude"])
-        db.session.add(new_location)
-        db.session.commit()
+        session.add(new_location)
+        session.commit()
 
         return new_location

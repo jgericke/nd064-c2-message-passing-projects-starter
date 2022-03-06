@@ -3,18 +3,17 @@ import json
 import time
 from datetime import datetime
 
-from models import Location
-from schemas import (
+from udaconnect_locations.models import Location
+from udaconnect_locations.schemas import (
     LocationSchema,
 )
-from services import LocationService
+from udaconnect_locations.services import LocationService
 from typing import Optional, List
 
 from concurrent import futures
 import grpc
-import location_pb2
-import location_pb2_grpc
-
+from protos import location_pb2
+from protos import location_pb2_grpc
 
 from google.protobuf import json_format
 
@@ -59,8 +58,6 @@ class LocationServicer(location_pb2_grpc.LocationServiceServicer):
 
         logger.info(f"Received request for location range: {lr_request}")
 
-        print(type(lr_request["start_date"]))
-
         start_date: datetime = datetime.strptime(lr_request["start_date"], DATE_FORMAT)
         end_date: datetime = datetime.strptime(lr_request["end_date"], DATE_FORMAT)
 
@@ -100,16 +97,18 @@ class LocationServicer(location_pb2_grpc.LocationServiceServicer):
         return json_format.ParseDict(LocationSchema().dump(location), result)
 
 
-server = grpc.server(futures.ThreadPoolExecutor(max_workers=2))
-location_pb2_grpc.add_LocationServiceServicer_to_server(LocationServicer(), server)
+if __name__ == "__main__":
 
+    logger.info("Starting LocationService (max_woerks=2) on port: 5005")
 
-print("Server starting on port 5005...")
-server.add_insecure_port("[::]:5005")
-server.start()
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=2))
+    location_pb2_grpc.add_LocationServiceServicer_to_server(LocationServicer(), server)
 
-try:
-    while True:
-        time.sleep(86400)
-except KeyboardInterrupt:
-    server.stop(0)
+    server.add_insecure_port("[::]:5005")
+    server.start()
+
+    try:
+        while True:
+            time.sleep(86400)
+    except KeyboardInterrupt:
+        server.stop(0)
