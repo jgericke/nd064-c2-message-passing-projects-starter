@@ -4,6 +4,7 @@ from typing import Dict, List
 
 from app import db, config
 from app.udaconnect_connections.models import Connection, Location, Person
+from app.udaconnect_connections.schemas import PersonSchema
 
 from geoalchemy2.functions import ST_AsText, ST_Point
 from sqlalchemy.sql import text
@@ -12,6 +13,9 @@ import grpc
 from protos import location_pb2
 from protos import location_pb2_grpc
 
+import requests
+import json
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("connections-api")
 
@@ -19,6 +23,9 @@ DATE_FORMAT = "%Y-%m-%d"
 
 # Initialize GPRC channel
 grpc_channel = grpc.insecure_channel(config.GRPC_URI)
+
+# Set persons REST API endpoint
+persons_api = f"{config.PERSONS_URI}/api/persons"
 
 
 class ConnectionService:
@@ -37,10 +44,13 @@ class ConnectionService:
         # Convert locations_resp.locations
         locations: List = locations_resp.locations
 
+        # Retrieve persons from person service API
+        persons_resp = requests.get(persons_api)
+        persons_resp.raise_for_status()
+        persons = persons_resp.json()
+
         # Cache all users in memory for quick lookup
-        person_map: Dict[str, Person] = {
-            person.id: person for person in PersonService.retrieve_all()
-        }
+        person_map: Dict[str, Person] = {person["id"]: person for person in persons}
 
         # Prepare arguments for queries - Note date reformating for delta
         data = []

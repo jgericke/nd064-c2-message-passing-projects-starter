@@ -7,6 +7,7 @@ DB_HOST = os.environ["DB_HOST"]
 DB_PORT = os.environ["DB_PORT"]
 DB_NAME = os.environ["DB_NAME"]
 GRPC_URI = os.environ["GRPC_URI"]
+PERSONS_URI = os.environ["PERSONS_URI"]
 
 
 class BaseConfig:
@@ -15,6 +16,7 @@ class BaseConfig:
     DEBUG = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     GRPC_URI = f"{GRPC_URI}"
+    PERSONS_URI = f"{PERSONS_URI}"
 
 
 class DevelopmentConfig(BaseConfig):
