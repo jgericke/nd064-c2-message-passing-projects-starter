@@ -4,19 +4,13 @@ from typing import Dict, List
 
 from app import db, config
 from app.udaconnect_connections.models import Connection, Location, Person
-from app.udaconnect_connections.schemas import (
-    ConnectionSchema,
-    LocationSchema,
-    PersonSchema,
-)
+
 from geoalchemy2.functions import ST_AsText, ST_Point
 from sqlalchemy.sql import text
 
 import grpc
 from protos import location_pb2
 from protos import location_pb2_grpc
-
-from google.protobuf.json_format import MessageToDict
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("connections-api")

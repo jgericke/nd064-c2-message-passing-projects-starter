@@ -29,14 +29,6 @@ class ConnectionDataResource(Resource):
 
         start_date = request.args.get("start_date")
         end_date = request.args.get("end_date")
-        """
-        start_date: datetime = datetime.strptime(
-            request.args.get("start_date"), DATE_FORMAT
-        )
-        end_date: datetime = datetime.strptime(
-            request.args.get("end_date"), DATE_FORMAT
-        )
-        """
         distance: Optional[int] = request.args.get("distance", 5)
 
         results = ConnectionService.find_contacts(
