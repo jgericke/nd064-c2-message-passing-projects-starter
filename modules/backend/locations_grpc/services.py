@@ -34,6 +34,19 @@ class LocationService:
         return session.query(Location).all()
 
     @staticmethod
+    def retrieve_range(
+        person_id: int, start_date: datetime, end_date: datetime
+    ) -> List[Location]:
+        locations: List = (
+            session.query(Location)
+            .filter(Location.person_id == person_id)
+            .filter(Location.creation_time < end_date)
+            .filter(Location.creation_time >= start_date)
+            .all()
+        )
+        return locations
+
+    @staticmethod
     def create(location: Dict) -> Location:
         validation_results: Dict = LocationSchema().validate(location)
         if validation_results:

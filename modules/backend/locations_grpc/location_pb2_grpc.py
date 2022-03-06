@@ -24,6 +24,11 @@ class LocationServiceStub(object):
                 request_serializer=location__pb2.GetLocationRequest.SerializeToString,
                 response_deserializer=location__pb2.Location.FromString,
                 )
+        self.GetLocationRange = channel.unary_unary(
+                '/LocationService/GetLocationRange',
+                request_serializer=location__pb2.GetLocationRangeRequest.SerializeToString,
+                response_deserializer=location__pb2.LocationList.FromString,
+                )
         self.Create = channel.unary_unary(
                 '/LocationService/Create',
                 request_serializer=location__pb2.CreateLocationRequest.SerializeToString,
@@ -41,6 +46,12 @@ class LocationServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetLocation(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetLocationRange(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -64,6 +75,11 @@ def add_LocationServiceServicer_to_server(servicer, server):
                     servicer.GetLocation,
                     request_deserializer=location__pb2.GetLocationRequest.FromString,
                     response_serializer=location__pb2.Location.SerializeToString,
+            ),
+            'GetLocationRange': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetLocationRange,
+                    request_deserializer=location__pb2.GetLocationRangeRequest.FromString,
+                    response_serializer=location__pb2.LocationList.SerializeToString,
             ),
             'Create': grpc.unary_unary_rpc_method_handler(
                     servicer.Create,
@@ -111,6 +127,23 @@ class LocationService(object):
         return grpc.experimental.unary_unary(request, target, '/LocationService/GetLocation',
             location__pb2.GetLocationRequest.SerializeToString,
             location__pb2.Location.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetLocationRange(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/LocationService/GetLocationRange',
+            location__pb2.GetLocationRangeRequest.SerializeToString,
+            location__pb2.LocationList.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

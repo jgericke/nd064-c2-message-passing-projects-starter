@@ -16,6 +16,12 @@ message GetLocationRequest {
   int32 id = 1;
 }
 
+message GetLocationRangeRequest {
+  int32 person_id = 1;
+  string start_date = 2;
+  string end_date = 3;
+}
+
 message CreateLocationRequest {
   int32 person_id = 1;
   string longitude = 2;
@@ -30,5 +36,6 @@ message Empty {
 service LocationService {
     rpc Get(Empty) returns (LocationList);
     rpc GetLocation (GetLocationRequest) returns (Location);
+    rpc GetLocationRange (GetLocationRangeRequest) returns (LocationList);
     rpc Create(CreateLocationRequest) returns (Location);
 }

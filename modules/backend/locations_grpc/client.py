@@ -18,6 +18,11 @@ resp = stub.Create(
         latitude="-122.290843",
         creation_time="2021-07-07T10:37:06",
     )
-)
+
 """
+resp = stub.GetLocationRange(
+    location_pb2.GetLocationRangeRequest(
+        person_id=5, start_date="2021-07-07", end_date="2021-07-08"
+    )
+)
 print(resp)
