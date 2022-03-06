@@ -1,4 +1,4 @@
-from app.udaconnect_connections.models import Connection
+from app import config
 from app.udaconnect_connections.schemas import (
     ConnectionSchema,
 )

@@ -8,6 +8,8 @@ DB_PORT = os.environ["DB_PORT"]
 DB_NAME = os.environ["DB_NAME"]
 GRPC_URI = os.environ["GRPC_URI"]
 PERSONS_URI = os.environ["PERSONS_URI"]
+KAFKA_URI = os.environ["KAFKA_URI"]
+KAFKA_TOPIC = os.environ["KAFKA_TOPIC"]
 
 
 class BaseConfig:
@@ -16,6 +18,8 @@ class BaseConfig:
     DEBUG = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     GRPC_URI = f"{GRPC_URI}"
+    KAFKA_URI = f"{KAFKA_URI}"
+    KAFKA_TOPIC = f"{KAFKA_TOPIC}"
     PERSONS_URI = f"{PERSONS_URI}"
 
 
