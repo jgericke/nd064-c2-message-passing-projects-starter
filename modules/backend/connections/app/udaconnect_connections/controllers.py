@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from app.udaconnect_connections.models import Connection
 from app.udaconnect_connections.schemas import (
     ConnectionSchema,
