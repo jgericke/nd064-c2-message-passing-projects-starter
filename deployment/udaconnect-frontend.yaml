@@ -36,17 +36,18 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
-          env:
-            - name: REACT_APP_PERSONS_URI
-              valueFrom:
-                configMapKeyRef:
-                  name: api-env
-                  key: REACT_APP_PERSONS_URI
-            - name: REACT_APP_CONNECTIONS_URI
-              valueFrom:
-                configMapKeyRef:
-                  name: api-env
-                  key: REACT_APP_CONNECTIONS_URI
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 5
           resources:
             requests:
               memory: "500Mi"

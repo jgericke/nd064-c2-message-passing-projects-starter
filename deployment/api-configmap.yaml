@@ -7,8 +7,6 @@ data:
   DB_PORT: "5432"
   LOCATIONS_GRPC_URI: "udaconnect-api-locations:5005"
   PERSONS_URI: "http://udaconnect-api-persons:5000"
-  REACT_APP_PERSONS_URI: "http://udaconnect-api-persons:5000"
-  REACT_APP_CONNECTIONS_URI: "http://udaconnect-api-connections:5000"
   KAFKA_URI: "kafka:9092"
   KAFKA_TOPIC: "connections"
 metadata:

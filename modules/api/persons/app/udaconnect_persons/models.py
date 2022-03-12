@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
+from pyexpat import model
 
 from app import db  # noqa
 from geoalchemy2 import Geometry
