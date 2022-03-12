@@ -32,7 +32,7 @@ def create_app(env=None):
     @app.before_request
     def before_request():
         # Initialize GPRC channel
-        g.grpc_channel = grpc.insecure_channel(app.config["GRPC_URI"])
+        g.grpc_channel = grpc.insecure_channel(app.config["LOCATIONS_GRPC_URI"])
 
         # Set up a Kafka producer
         g.kafka_producer = KafkaProducer(bootstrap_servers=app.config["KAFKA_URI"])

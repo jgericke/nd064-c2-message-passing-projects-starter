@@ -34,6 +34,18 @@ spec:
         - image: juliangericke/nd064-message-passing:locations
           name: udaconnect-api-locations
           imagePullPolicy: Always
+          ports:
+            - containerPort: 5005
+          readinessProbe:
+            tcpSocket:
+              port: 5005
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 5005
+            initialDelaySeconds: 15
+            periodSeconds: 20
           env:
             - name: DB_USERNAME
               valueFrom:

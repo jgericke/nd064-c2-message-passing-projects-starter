@@ -34,6 +34,20 @@ spec:
         - image: juliangericke/nd064-message-passing:connections
           name: udaconnect-api-connections
           imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 30
           env:
             - name: DB_USERNAME
               valueFrom:
@@ -60,11 +74,11 @@ spec:
                 configMapKeyRef:
                   name: api-env
                   key: DB_PORT
-            - name: GRPC_URI
+            - name: LOCATIONS_GRPC_URI
               valueFrom:
                 configMapKeyRef:
                   name: api-env
-                  key: GRPC_URI
+                  key: LOCATIONS_GRPC_URI
             - name: PERSONS_URI
               valueFrom:
                 configMapKeyRef:

@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: udaconnect-frontend
+  name: udaconnect-frontend
+spec:
+  ports:
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+      nodePort: 30000
+  selector:
+    service: udaconnect-frontend
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: udaconnect-frontend
+  name: udaconnect-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: udaconnect-frontend
+  template:
+    metadata:
+      labels:
+        service: udaconnect-frontend
+    spec:
+      containers:
+        - image: juliangericke/nd064-message-passing:frontend
+          name: udaconnect-frontend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REACT_APP_PERSONS_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: api-env
+                  key: REACT_APP_PERSONS_URI
+            - name: REACT_APP_CONNECTIONS_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: api-env
+                  key: REACT_APP_CONNECTIONS_URI
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "500m"
+            limits:
+              memory: "500Mi"
+              cpu: "500m"
+      restartPolicy: Always
