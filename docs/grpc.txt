@@ -1,0 +1,63 @@
+The Locations service implements GRPC server functionality (with Connections acting as a client).
+
+GRPC Protos are stored within the locations/protos directory, and different request / response messages have been implemented
+to support effective data handling.
+
+In order to ensure the Locations GRPC service functions with parity to the original Locations REST controller and services, 
+I've implemented tests to validate. Tests are available under tests_main.py and can be run by executing `pytest` within the locations
+directory. A brief overview of GRPC functionality is as follows:
+
+* All Locations are retrievable over GRPC:
+
+```
+from google.protobuf.json_format import MessageToDict
+
+channel = grpc.insecure_channel("localhost:5005")
+stub = location_pb2_grpc.LocationServiceStub(channel)
+
+resp = stub.Get(location_pb2.Empty())
+```
+
+* Individual Locations are retrievable over GRPC when passed a location_id parameter:
+
+```
+from google.protobuf.json_format import MessageToDict
+
+channel = grpc.insecure_channel("localhost:5005")
+stub = location_pb2_grpc.LocationServiceStub(channel)
+
+resp = stub.GetLocation(location_pb2.GetLocationRequest(id=<location_id>))
+```
+
+* Locations are retrievable based on an person_id and start and end date ranges (decoupled from the Connections service):
+
+```
+from google.protobuf.json_format import MessageToDict
+
+channel = grpc.insecure_channel("localhost:5005")
+stub = location_pb2_grpc.LocationServiceStub(channel)
+
+    resp = stub.GetLocationRange(
+        location_pb2.GetLocationRangeRequest(
+            person_id=<person_id>, start_date="<YYYY-MM-DD>", end_date="<YYYY-MM-DD>"
+        )
+    )
+```
+
+* Locations are creatable:
+
+```
+from google.protobuf.json_format import MessageToDict
+
+channel = grpc.insecure_channel("localhost:5005")
+stub = location_pb2_grpc.LocationServiceStub(channel)
+
+    resp = stub.Create(
+        location_pb2.CreateLocationRequest(
+            person_id=5,
+            longitude="37.4363",
+            latitude="-122.290843",
+            creation_time="2021-07-07T10:37:06",
+        )
+    )
+```

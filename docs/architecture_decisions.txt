@@ -1,0 +1,35 @@
+UdaConnect Microservices Design Decisions
+
+1. I elected to separate the Persons, Locations and Connections functionality in the monolithic API into disctinct microservices.
+   This required decoupling the Connections controller, service and related functionality from the Persons controller.
+
+2. After reviewing the UdaConnect frontend and API request and response flows, specifically evaluating response sizes, I opted
+   to implement the following messaging techniques between services:
+
+   2.1. Locations: Considering the Locations microservice functionality is not surfaced at all to the UdaConnect frontend and 
+        location querying could prove expensive at scale, I opted to re-implement all of the original REST endpoints in GRPC.
+ 
+   2.2. Persons: The UdaConnect frontend retrieves a list of all people via a REST call to the Persons service, and hence I
+        determined retaining REST as the message passing technique for the Persons API would be sufficient. I did opt to extend
+        the Persons API with a flask-restx model to support Swagger body posts (as the original did not have this functionality).
+
+   2.3. Connections: The Connections service does most of the heavy lifting from a backend perspective, specifically retrieving
+        all locations for a person_id and start/end_date (originally via a database query), caching all persons (originally by 
+        directly calling the persons service) and querying the locations database table for locations which match the passed
+        parameters for all person_ids. To augment and enhance this functionality I decided to:
+
+        2.3.1. Retain the Connections REST interface exposed to the UdaConnect frontend
+    
+        2.3.2. Retrieve all locations based on the REST parameters passed, via a GRPC client request to the locations GRPC service, 
+               passing person_id, start and end_date parameters (query parameters from the REST call)
+
+        2.3.3. Implement a REST client call to the Persons service to retrieve the list of people, in order to decouple the 
+               Connections service from calling the Persons retrieve_all() function directly.
+
+        2.3.4. Implement a Kafka producer in the Connections service to stream Connection results to provide 
+               faster processing of connection results by upstream or downstream services
+            
+        2.3.5. Implement a new Kafka consumer service - Connections Consumer - which reads all streamed responses
+               from the Connections Kafka producer - this service could then be used to potentially cache connection query
+               responses.
+        
