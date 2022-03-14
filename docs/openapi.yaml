@@ -1,21 +1,21 @@
-swagger: '2.0'
+swagger: "2.0"
 host: udaconnect-api-persons
 basePath: /
 paths:
   /api/persons:
     post:
       responses:
-        '201':
+        "201":
           description: Success
           schema:
-            $ref: '#/definitions/Person'
+            $ref: "#/definitions/Person"
       operationId: post_persons_resource
       parameters:
         - name: payload
           required: true
           in: body
           schema:
-            $ref: '#/definitions/Person'
+            $ref: "#/definitions/Person"
         - name: X-Fields
           in: header
           type: string
@@ -25,7 +25,7 @@ paths:
         - UdaConnect Persons
     get:
       responses:
-        '200':
+        "200":
           description: Success
       operationId: get_persons_resource
       tags:
@@ -39,21 +39,47 @@ paths:
         type: string
     get:
       responses:
-        '200':
+        "200":
           description: Success
       operationId: get_person_resource
       tags:
         - UdaConnect Persons
+  /api/connections/{person_id}:
+    parameters:
+      - in: query
+        description: Proximity to a given user in meters
+        name: distance
+        type: string
+      - in: query
+        description: Upper bound of date range
+        name: end_date
+        type: string
+      - in: query
+        description: Lower bound of date range
+        name: start_date
+        type: string
+      - in: path
+        description: Unique ID for a given Person
+        name: person_id
+        required: true
+        type: string
+    get:
+      responses:
+        "200":
+          description: Success
+      operationId: get_connection_data_resource
+      tags:
+        - UdaConnect Connections
 info:
-  title: UdaConnect Persons API
+  title: UdaConnect API
   version: 0.1.0
 produces:
   - application/json
 consumes:
   - application/json
 tags:
-  - name: UdaConnect Persons
-    description: UdaConnect Persons API.
+  - name: UdaConnect API
+    description: UdaConnect API.
 definitions:
   Person:
     required:
